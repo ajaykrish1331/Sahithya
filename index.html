@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Love</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    overflow:hidden;
+    background:linear-gradient(135deg,#ffe6ec,#ffd1dc);
+}
+
+/* PAGE */
+.page{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    transition:0.8s;
+}
+.hidden{
+    opacity:0;
+    pointer-events:none;
+}
+
+/* CARD */
+.card{
+    z-index:10;
+    background:rgba(255,255,255,0.3);
+    backdrop-filter:blur(15px);
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 0 40px rgba(255,100,150,0.3);
+    text-align:center;
+}
+
+h1{
+    color:#ff3366;
+}
+
+input{
+    padding:10px;
+    border:none;
+    border-radius:20px;
+}
+
+button{
+    margin-top:15px;
+    padding:10px 20px;
+    border:none;
+    border-radius:20px;
+    background:#ff4d6d;
+    color:white;
+}
+
+/* HEARTS */
+.heart{
+    position:fixed;
+    width:10px;
+    height:10px;
+    background:pink;
+    transform:rotate(45deg);
+    animation:float 6s linear infinite;
+}
+.heart::before,.heart::after{
+    content:'';
+    position:absolute;
+    width:10px;height:10px;
+    background:inherit;
+    border-radius:50%;
+}
+.heart::before{top:-5px}
+.heart::after{left:-5px}
+
+@keyframes float{
+    from{transform:translateY(100vh) rotate(45deg)}
+    to{transform:translateY(-10vh) rotate(45deg)}
+}
+
+/* GALLERY */
+.bigView img{
+    width:220px;
+    border-radius:15px;
+}
+
+#imgText{
+    background:rgba(255,255,255,0.5);
+    padding:15px;
+    border-radius:10px;
+    max-width:220px;
+}
+
+.thumbs{
+    display:flex;
+    gap:10px;
+}
+.thumbs img{
+    width:70px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* STORY BOX (FIXED) */
+.story-box{
+    width:350px;
+    height:350px;
+    background:white;
+    border-radius:15px;
+    padding:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+.story-content{
+    height:270px;
+    overflow-y:auto;
+    text-align:left;
+    line-height:1.6;
+    padding-right:10px;
+}
+
+/* FINAL */
+#finalText{
+    position:absolute;
+    bottom:-150px;
+    font-size:30px;
+    animation:rise 2s ease forwards;
+}
+@keyframes rise{
+    from{bottom:-150px;opacity:0;}
+    to{bottom:40%;opacity:1;}
+}
+
+canvas{
+    position:absolute;
+    top:0;
+    left:0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO -->
+<audio id="bgMusic" loop>
+    <source src="websong.mp3" type="audio/mpeg">
+</audio>
+
+<!-- PAGE 1 -->
+<div id="lock" class="page">
+<div class="card">
+<h1>Enter Secret Code ❤️</h1>
+<input id="pass" type="password">
+<br>
+<button onclick="unlock()">Unlock</button>
+</div>
+</div>
+
+<!-- PAGE 2 -->
+<div id="main" class="page hidden">
+<h1>Happy Birthday My Love ❤️</h1>
+<button onclick="next('gallery')">Next</button>
+</div>
+
+<!-- PAGE 3 -->
+<div id="gallery" class="page hidden">
+<h1>Memories ❤️</h1>
+
+<div class="bigView">
+<img id="bigImg" src="photos/img1.jpeg">
+<div id="imgText">'The ocean heard everything we never said. And somehow… it still felt like love was louder. 🌊❤️</div>
+</div>
+
+<div class="thumbs">
+<img src="photos/img1.jpeg"
+ onclick="showImage(this,'The ocean heard everything we never said. And somehow… it still felt like love was louder. 🌊❤️')">
+<img src="photos/img2.jpeg" 
+onclick="showImage(this,'Somewhere between smiles and silence, we became something real...🫶❤️')">
+<img src="photos/img3.jpeg" 
+onclick="showImage(this,'The world felt quiet up here…but my heart was loud for you...❤️')">
+<img src="photos/img4.jpeg" 
+onclick="showImage(this,'In a place full of prayers, mine was always you.😌🎀❤️')">
+</div>
+
+<button onclick="next('story')">Next</button>
+</div>
+
+<!-- PAGE 4 (FIXED STORY) -->
+<div id="story" class="page hidden">
+<h1>Our Story ❤️</h1>
+
+<div class="story-box">
+<div class="story-content">
+She came all the way from Sri Lanka to Dindigul…
+
+That was the day everything changed.
+
+We met like strangers…  
+Went to Kodaikanal with our families…  
+And somewhere in those silent moments… something began.
+
+It wasn’t sudden.  
+It wasn’t planned.
+
+Just looks…  
+Just silence…  
+Just feelings we couldn’t explain.
+
+Before we realized… we were no longer strangers.
+
+We were falling.
+
+After the trip… distance came back.  
+But the feeling didn’t.
+
+That’s when we knew…
+
+This wasn’t just a moment.
+
+We had fallen in love ❤️
+</div>
+</div>
+
+<button onclick="next('final')">Final</button>
+</div>
+
+<!-- PAGE 5 -->
+<div id="final" class="page hidden">
+<canvas id="fire"></canvas>
+<h1 id="finalText">Happy Birthday My Love ❤️</h1>
+</div>
+
+<script>
+
+/* PASSWORD + MUSIC */
+function unlock(){
+    if(document.getElementById("pass").value==="1607"){
+        document.getElementById("bgMusic").play(); // 🔥 SONG START
+        next('main');
+    }else alert("Wrong password");
+}
+
+/* PAGE */
+function next(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+
+    if(id==="final"){
+        startFireworks();
+    }
+}
+
+/* GALLERY */
+function showImage(el,text){
+    document.getElementById("bigImg").src=el.src;
+    document.getElementById("imgText").innerText=text;
+}
+
+/* HEARTS */
+setInterval(()=>{
+    let h=document.createElement("div");
+    h.className="heart";
+    h.style.left=Math.random()*100+"%";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),6000);
+},300);
+
+/* FIREWORKS */
+let c=document.getElementById("fire");
+let ctx=c.getContext("2d");
+c.width=window.innerWidth;
+c.height=window.innerHeight;
+
+let particles=[];
+
+function createFirework(){
+    let x=Math.random()*c.width;
+    let y=Math.random()*c.height/2;
+    for(let i=0;i<50;i++){
+        particles.push({
+            x:x,
+            y:y,
+            angle:Math.random()*Math.PI*2,
+            speed:Math.random()*5+2,
+            life:60
+        });
+    }
+}
+
+function animateFire(){
+    ctx.fillStyle="rgba(0,0,0,0.2)";
+    ctx.fillRect(0,0,c.width,c.height);
+
+    particles.forEach((p,i)=>{
+        p.x+=Math.cos(p.angle)*p.speed;
+        p.y+=Math.sin(p.angle)*p.speed;
+        p.life--;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+        ctx.fill();
+
+        if(p.life<=0) particles.splice(i,1);
+    });
+}
+
+function startFireworks(){
+    setInterval(createFirework,800);
+    setInterval(animateFire,30);
+}
+</script>
+
+</body>
+</html>
